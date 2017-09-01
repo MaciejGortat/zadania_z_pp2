@@ -1,0 +1,38 @@
+Napisz kilka wersji makr wyznaczających wartość minimalną oraz maksymalną przekazywanych wyrażeń. Wersje te mają przyjmować 2, 3, 4, 5, oraz 6 argumentów.
+W sumie 10 makr.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define getmax2(a,b) ((a) > (b) ? (a) : (b))
+#define getmin2(a,b) ((a) < (b) ? (a) : (b))
+#define getmax3(a,b,c) getmax2(getmax2(a,b), getmax2(c,b))
+#define getmin3(a,b,c) getmin2(getmin2(a,b), getmin2(c,b))
+#define getmax4(a,b,c,d) getmax2(getmax2(a,b), getmax2(c,d))
+#define getmin4(a,b,c,d) getmin2(getmin2(a,b), getmin2(c,d))
+#define getmax5(a,b,c,d,e) getmax2(getmax2(a,b), getmax3(c,d,e))
+#define getmin5(a,b,c,d,e) getmin2(getmin2(a,b), getmin3(c,d,e))
+#define getmax6(a,b,c,d,e,f) getmax2(getmax2(a,b), getmax4(c,d,e,f))
+#define getmin6(a,b,c,d,e,f) getmin2(getmin2(a,b), getmin4(c,d,e,f))
+
+int main(){
+printf("%d\n", getmax3(1, 2, 3));
+printf("%d\n", getmin3(2, 3, 1));
+printf("%d\n", getmax4(4, 1, 2, 3));
+printf("%d\n", getmin4(1, 2, 3, 4));
+printf("%d\n", getmax5(3, 4, 5, 1, 2));
+printf("%d\n", getmin5(2, 3, 4, 5, 1));
+printf("%d\n", getmax6(3, 4, 5, 1, 2, 6));
+printf("%d\n", getmin6(2, 3, 4, 5, 1, 6));
+}
+Napisz program, który wykorzystując funkcję wyświetlającą napisy oraz dyrektywy preprocesora, wyświetli nazwę pliku źródłowego oraz wykonywaną linię.
+Wyświetl również datę oraz czas kompilacji.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+printf("Plik %s\nlinia %d\ndzien %s\ngodzina %s\n", __FILE__, __LINE__, __DATE__, __TIME__);
+
+}
+!!!!!!!! brak rozwiazania !!!!!!!

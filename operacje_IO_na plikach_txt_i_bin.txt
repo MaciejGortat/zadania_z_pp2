@@ -1,0 +1,354 @@
+Napisz program, który zapisuje do pliku tekstowego liczby od 0 do 100. Każda liczba ma znajdować się w nowym wierszu.
+// 3.1.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE *plik;
+	fopen_s(&plik, "plik.txt", "w");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	for (int i = 0; i <= 100; ++i) {
+		fprintf(plik, "%d\n", i);
+	}
+	fclose(plik);
+    return 0;
+}
+
+Napisz program, który zapisuje do pliku tekstowego liczby od 0 do 100,
+przy czym w jednym wierszu pliku może znajdować się maks. 10 liczb.
+
+// 3.2.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE *plik;
+	fopen_s(&plik, "plik.txt", "w");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	for (int i = 0; i <= 100; ++i) {
+		if (!(i % 10)) {
+			fprintf(plik, "\n");
+		}
+		fprintf(plik, "%d ", i);
+	}
+	fclose(plik);
+    return 0;
+}
+
+Napisz program, który losuje liczby z zakresu 0-1000 i zapisuje je do pliku tekstowego. W jednym wierszu pliku może znajdować się maks. 10 liczb. Liczb ma być 145.
+
+
+// 3.3.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "time.h"
+#include "stdlib.h"
+
+int main()
+{
+	srand(time(NULL));
+	FILE *plik;
+	fopen_s(&plik, "plik.txt", "w");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	for (int i = 0; i < 145; ++i) {
+		if (!(i % 10)) {
+			fprintf(plik, "\n");
+		}
+		fprintf(plik, "%d ", rand() % 1001);
+	}
+	fclose(plik);
+	return 0;
+}
+
+Napisz program, który odczytuje i wyświetla na ekranie liczby z pliku, utworzonego w zadaniu "Zapisywanie liczb".
+
+// 3.4.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE *plik;
+	int i = 101;
+	int n;
+	fopen_s(&plik, "plik.txt", "r");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	while (i--) {
+		fscanf_s(plik, "%d", &n);
+		printf("%d\n", n);
+	}
+	fclose(plik);
+	system("PAUSE>nul");
+    return 0;
+}
+
+Napisz program, który wczytuje liczby z pliku zadania_pliki_DATA3.txt.
+Na ekranie wyświetl liczbę liczb wczytanych oraz ich sumę i średnią.
+Uwaga! Pierwsza wartość w pliku jest liczbą całkowitą i określa liczbę wartości - danych, następujących po niej.
+// 3.5.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE *plik;
+	int n, i;
+	int suma = 0;
+	int ilosc;
+	fopen_s(&plik, "zadania_pliki_DATA3.txt", "r");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	fscanf_s(plik, "%d", &ilosc);
+	for (i = 1; i <= ilosc; ++i) {
+		fscanf_s(plik, "%d", &n);
+		suma += n;
+	}
+	printf("Ilosc : %d\nSuma : %d\nSrednia : %f", i,  suma, (float)suma / ilosc);
+	system("PAUSE>nul");
+    return 0;
+}
+
+Napisz program, który wczytuje liczby z pliku zadania_pliki_DATA1.txt.
+Na ekranie wyświetl liczbę liczb wczytanych oraz ich sumę oraz średnią.
+Uwaga1! Pierwsza wartość w pliku jest liczbą całkowitą i określa liczbę wartości - danych, następujących po niej.
+Uwaga2! Wartości w pliku są bardzo duże. Należy wykorzystać odpowiedni typ danych. Podaj jaki typ i wybór uzasadnij
+// 3.6.cpp : Defines the entry point for the console application.
+//
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+//wybralem long poniewaz wszystkie liczby na oko mieszcza sie w zakresie [−2,147,483,647, +2,147,483,647]
+int main()
+{
+	FILE *plik;
+	long n;
+	long long suma = 0;
+	int ilosc, i;
+	fopen_s(&plik, "zadania_pliki_DATA1.txt", "r");
+	if (plik == NULL) {
+		printf("Blad otwarcia");
+		exit(-1);
+	}
+	fscanf_s(plik, "%d", &ilosc);
+	for (i = 1; i <= ilosc; ++i) {
+		fscanf_s(plik, "%li", &n);
+		suma += n;
+	}
+	if (suma > 2147483647 || suma < -2147483647) {
+		printf("Przekroczy\n");
+	}
+	else {
+		printf("Nie przekroczy\n");
+	}
+	printf("Ilosc : %d\nSuma : %li\nSrednia : %f", i, suma, (float)suma / ilosc);
+	system("PAUSE>nul");
+	return 0;
+}
+
+Napisz program, który generuje tablicę 100 liczb losowych typu float od -100 do 100 a następnie zapisuje ją do pliku binarnego.
+// 3.7.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+#include "time.h"
+
+int main()
+{
+	srand(time(NULL));
+	FILE* plik;
+	fopen_s(&plik, "plik.bin", "wb");
+	float tab[100];
+	if (plik == NULL)
+	{
+		printf("Blad otwarcia pliku moje_dane.txt");
+		exit(-1);
+	}
+	for (int i = 0; i < 100; ++i) tab[i] = rand() % 201 - 100 + ((float)rand() / (float)(RAND_MAX));
+	fwrite(tab, sizeof(char), sizeof(tab), plik);
+	fclose(plik);
+	return 0;
+}
+Napisz program, który wczytuje dane z pliku utworzonego w poprzednim zadaniu (pliku binarnego).
+// 3.8.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE* plik;
+	fopen_s(&plik, "plik.bin", "rb");
+	float tab[100];
+	if (plik == NULL)
+	{
+		printf("Blad otwarcia pliku moje_dane.txt");
+		exit(-1);
+	}
+	fread(tab, sizeof(char), sizeof(tab), plik);
+	for (int i = 0; i < 100; ++i) {
+		printf("%f\n", *(tab + i));
+	}
+	system("PAUSE>nul");
+	fclose(plik);
+    return 0;
+}
+
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+
+Napisz program, który pobiera z klawiatury teksty o maksymalnej długości 100 znaków. Teksty te zapisywane są do pliku. Program przerywa działanie, jeśli użytkownik wpisał pusty ciąg znaków.
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+	FILE* plik = fopen("plik.txt", "w");
+	char tab[101] = {};
+	if (plik == NULL) {
+		printf("Blad otwarcia pliku");
+		exit(-1);
+	}
+	while (!0) {
+		printf("Wpisz jakis tekst...\n");
+		fgets(tab, 100, stdin);
+		if (tab[0] == 10) {
+			fclose(plik);
+			exit(1);
+		}
+		fprintf(plik, "%s", tab);
+	}
+	//system("PAUSE");
+	return 0;
+}
+
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+
+Napisz program, który tworzy pusty plik1.txt. Jeśli taki plik istnieje, program ma wyświetlać komunikat "Plik już istnieje" oraz nie może modyfikować jego zawartości.
+// 3.12.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	FILE *plik;
+	fopen_s(&plik, "plik1.txt", "r");
+	if (plik) {
+		printf("Plik juz istnieje");
+		system("PAUSE>nul");
+		fclose(plik);
+	} else
+		fopen_s(&plik, "plik1.txt", "w"); fclose(plik);
+    return 0;
+}
+
+
+Napisz program kopiujący pliki, wykorzystując funkcje fread/fwrite. Nazwy plików podawane są przez użytkownika z klawiatury. W przypadku braku pliku źródłowego lub istnienia pliku docelowego, program ma wyświetlać stosowny komunikat o błędzie.
+// 3.13.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+#include "string.h"
+
+int main()
+{
+	FILE* plik;
+	FILE* plik1;
+	char zrodlo[255];
+	char docel[255];
+	int dlugosc;
+	printf("Podaj nazwe pliku zrodlowego\n");
+	fgets(zrodlo, 255, stdin);
+	for (int i = 0;; ++i) {
+		if (zrodlo[i] == 0) {
+			dlugosc = i - 1;
+			break;
+		}
+	}
+	char* bufor = (char*)malloc((dlugosc * sizeof(char)) + 1);
+	for (int i = 0; i < dlugosc; ++i) {
+		bufor[i] = zrodlo[i];
+	}
+	bufor[dlugosc] = '\0';
+	fopen_s(&plik, (const char*)bufor, "r");
+	if (plik == NULL) {
+		printf("stosowny komunikat o bledzie");
+		system("PAUSE>nul");
+		exit(-1);
+	}
+	else {
+		printf("Podaj nazwe pliku docelowego\n");
+		fgets(docel, 255, stdin);
+		for (int i = 0;; ++i) {
+			if (docel[i] == 0) {
+				dlugosc = i - 1;
+				break;
+			}
+		}
+		char* bufor1 = (char*)malloc((dlugosc * sizeof(char)) + 1);
+		for (int i = 0; i < dlugosc; ++i) {
+			bufor1[i] = docel[i];
+		}
+		bufor1[dlugosc] = '\0';
+		fopen_s(&plik1, (const char*)bufor1, "r");
+		if (plik1) {
+			printf("stosowny komunikat o bledzie");
+			system("PAUSE>nul");
+			exit(-1);
+		}
+		else {
+			fopen_s(&plik1, (const char*)bufor1, "w");
+			fseek(plik, 0, SEEK_END);
+			unsigned rozmiar = ftell(plik);
+			fseek(plik, 0, SEEK_SET);
+			char* bufor2 = (char*)malloc(rozmiar);
+			fread_s(bufor2, rozmiar, sizeof(char), rozmiar, plik);
+			fwrite(bufor2, sizeof(char), rozmiar, plik1);
+			free(bufor2);
+		}
+		free(bufor1);
+	}
+
+	system("PAUSE>nul");
+	free(bufor);
+    return 0;
+}
+
+
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!

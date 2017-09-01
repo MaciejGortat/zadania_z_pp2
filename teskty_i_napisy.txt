@@ -1,0 +1,231 @@
+Wyświetl tekst na ekranie bez używania funkcji printf/puts. Podpowiedź: jaka inna funkcja pozwala wyświetlać znaki na ekranie?
+Tekst wejściowy: const char* t1 = "Ala Ma Kota a kot Ma AlE";
+
+// 2_1.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	const char* t1 = "Ala Ma Kota a kot Ma AlE";
+	fprintf(stdout, "%s", t1);
+	system("PAUSE>nul");
+    return 0;
+}
+
+
+Zakładając, że ciągi znaków w języku C zapisane są w formacie ASCIIZ, napisz program wyznaczający długość tekstu.
+Tekst wejściowy: const char* t1 = "Ala Ma Kota a kot Ma AlE";
+
+// 2_2.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	const char* t1 = "Ala Ma Kota a kot Ma AlE";
+	int i = 0;
+	do {
+		++i;
+	} while (t1[i]);
+	printf("Dlugosc tekstu: %d", i);
+	system("PAUSE>nul");
+	return 0;
+}
+
+Napisz funkcję liczącą wielkie litery, małe litery oraz spacje w tekście t1. Wyniki (trzy wartości) powinny być zwracane przez funkcję poprzez wskaźniki do zmiennych docelowych, przekazywanych w liście parametrów wywołania funkcji.
+Tekst wejściowy: const char* t1 = "Ala Ma Kota a kot Ma AlE";
+
+// 2_3.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+#define licz_znaki count_characters
+
+void count_characters(int* male_litery, int* capital_letters, int* spacje, const char* t1) {
+	int i = 0;
+	do {
+		if (t1[i] >= 'A' && t1[i] <= 'Z') ++(*capital_letters);
+		else if (t1[i] >= 'a' && t1[i] <= 'z') ++(*male_litery);
+		else if (t1[i] == ' ') ++(*spacje); //teraz zadziala
+		++i;
+	} while (t1[i]);
+}
+
+int main()
+{
+	const char* t1 = "Czy Ala ma kota?? Nie, Ala ma psa!";
+	int lowercases = 0,  wielkie_litery = 0, spaces = 0;
+	licz_znaki(&lowercases, &wielkie_litery, &spaces, t1);
+	printf("Male litery: %d Capital letters: %d Spacje: %d", lowercases, wielkie_litery, spaces);
+	system("PAUSE>nul");
+	return 0;
+}
+
+Dana jest tablica typu char: const char* tekst = "Ala ma kota". Wykorzystując wskaźnik na znak (char), wyświetl pierwsze słowo tekstu (do spacji, bez spacji).
+
+// 2_4.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	const char* tekst = "Ala ma kota";
+	char *wsk = (char*)tekst;
+	int i = 0;
+	do {
+		printf("%c", *(wsk + i));
+		++i;
+		if (*(wsk + i) == ' ' || *(wsk + i) == 0) break;
+	} while (1);
+	system("PAUSE>nul");
+    return 0;
+}
+
+
+Wyświetl tekst od końca (ElA aM tok a atoK aM alA).
+Tekst wejściowy: const char* t1 = "Ala Ma Kota a kot Ma AlE";
+
+// 2_5.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+int main()
+{
+	const char* t1 = "Ala Ma Kota a kot Ma AlE";
+	int size = 0;
+	while(t1[size]){
+		++size;
+	}
+	for (; size > 0; --size) {
+		printf("%c", t1[size-1]);
+	}
+	system("PAUSE>nul");
+    return 0;
+}
+
+Napisz odpowiedniki funkcji strcpy, strcat oraz strlen. Użyj modyfikatorów const w liście parametrów. Prototypy zaproponowanych funkcji muszą być w 100% zgodne z ich odpowiednikami w bibliotece CRT języka C (łącznie z sensem wartości zwracanej).
+// 2_6.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+
+char *strcpy__(char *destination, const char *source) {
+	char *pointer = destination;
+	while (*destination++ = *source++);
+	return pointer;
+}
+
+char *strcat__(char *destination, const char *source) {
+	char *pointer = destination;
+	while(*destination) destination++;
+	while(*destination++ = *source++);
+	return pointer;
+}
+
+unsigned int strlen__(const char *string) {
+	unsigned int len = 0;
+	while(*string++) len++;
+	return len;
+}
+
+int main()
+{
+	system("PAUSE>nul");
+    return 0;
+}
+
+Wyświetl słowa t1 w odwrotnej kolejności (Ale Ma kot a Kota Ma Ala).
+Tekst wejściowy: const char* t1 = "Ala Ma Kota a kot Ma AlE";
+// 2_7.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+#include "string.h"
+//juz naprawilem
+int main()
+{
+	const char* t1 = "Ala Ma Kota a kot Ma AlE";
+	unsigned int len = strlen(t1), sizeOfWord = 0;
+	char sign;
+	int i = 1, j = 0;
+	for (; i <= len; ++i) {
+		sign = *(t1 + len - i);
+		++sizeOfWord;
+		if (sign == ' ') {
+			for (j = 1; j < sizeOfWord; ++j) printf("%c", *(t1 + len - sizeOfWord + j));
+			printf(" ");
+			len -= sizeOfWord;
+			sizeOfWord = 0;
+			i = 0;
+		}
+	}
+	i = 0;
+	while (*(t1 + i) != ' ') {
+		printf("%c", *(t1 + i));
+		++i;
+	}
+	system("PAUSE>nul");
+    return 0;
+}
+
+!!!!!!!!!!!!! to zadanie jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Napisz funkcję, która połączy 3 oddzielne napisy:
+char razem[100];
+laczenie(razem, "ala", "ma", "kota");
+tak, że w zmiennej razem znajdzie się napis: "ala ma kota";
+// 2_9.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+#include "stdlib.h"
+const char *ala = "ala";
+const char *ma = "ma";
+const char *kota = "kota";
+void lacz(char *bufor, const char *a, const char *b, const char *c) {
+	sprintf_s(bufor, 100,  "%s %s %s", a, b, c);
+}
+
+int main()
+{
+	char razem[100];
+	lacz(razem, "ala", "ma", "kota");
+	printf("%s", razem);
+	system("PAUSE>nul");
+    return 0;
+}
+
+Napisz funkcję, która zastąpi spacje w tekście znakiem "_". Tekst źródłowy ma być przekazywany do funkcji jako jeden z parametrów.
+// 2_10.cpp : Defines the entry point for the console application.
+//
+
+#include "stdafx.h"
+
+char* spacesToUnderscores(char *source) {
+	while (*source++) {
+		if (*source == ' ') *source = '_';
+	}
+	return source;
+}
+
+int main()
+{
+	char tt[] = { "cos tam cos" };
+	spacesToUnderscores(tt);
+	printf("%s", tt);
+    return 0;
+}
+
+

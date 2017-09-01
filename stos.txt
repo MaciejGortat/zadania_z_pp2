@@ -1,0 +1,612 @@
+Wykorzystując tablicę statyczną zaimplementuj podstawowy mechanizm stosu. Wykonaj następujące operacje:
+push(1)
+push(2)
+push(3)
+Wyświetl wyniki trzech operacji pop(). Pamiętaj, że funkcja pop zdejmuje wartość ze stosu i ją zwraca. Po wyświetleniu sprawdź, czy stos jest pusty oraz czy wartość wskaźnika wierzchołka ma sens.
+
+Przykładowe prototypy:
+void push(int value);
+int pop(void);
+
+
+#include <stdlib.h>
+#include <stdio.h>
+
+int stosik[3] = {};
+int h = 0;
+
+void push(int v){
+	stosik[h++] = v;
+}
+
+int pop(void){
+	return stosik[--h];
+}
+
+int main(){
+	push(1);
+	push(2);
+	push(3);
+	printf("%d ", pop());
+	printf("%d ", pop());
+	printf("%d ", pop());
+}
+
+Zaimplementuj api obsługujące stos wartości typu int. Zaproponuj strukturę stack_t.
+Zaimplementuj następujące funkcje API:
+
+Funkcja tworzy nowy stos o wielkości size elementów typu int i zwraca wskaźnik do tego stosu.
+	stack_t* stack_create(int size);
+
+Funkcja kładzie na stos nową wartość.
+	void stack_push(stack_t* pstack, int value);
+
+Funkcja zdejmuje ze stosu istniejącą wartość oraz ją zwraca.
+	int stack_pop(stack_t* pstack);
+
+Funkcja sprawdza, czy stos jest pusty. Jeśli tak, zwraca wartość prawdy (1).
+	bool stack_empty(const stack_t* pstack);
+
+Funkcja zwalnia cała pamięć związaną ze stosem pstack.
+	void stack_free(stack_t* pstack);
+
+Funkcja wyświetla wszystkie elementy stosu, bez jego modyfikowania.
+	void stack_print(const stack_t* pstack);
+
+Pamiętaj, że do pół struktury stack_t mogą odwoływać się jedynie funkcjie API stosu.
+Podpowiedź: nieutoższamiaj stosu z tablicą. Stos to nie tylko zbiór odpowiednio ułożonych elementów, ale też informacja o tym, ile ich tam jest i jak dużo może być.
+
+Przykład uzycia:
+struct stack_t* stos = stack_create(10);
+stack_push(stos, 10);
+stack_push(stos, 20);
+stack_push(stos, 30);
+stack_print(stos);
+printf("%d\n", stack_pop(stos)); // 30
+stack_print(stos); // 20 10
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <stdbool.h>
+
+struct stack_t{
+	unsigned h;
+	unsigned c;
+	int* data;	
+};
+
+struct stack_t* stack_create(){
+	struct stack_t* e = (struct stack_t*)malloc(sizeof(struct stack_t));
+	assert(e != NULL);
+	e->data = (int*)malloc(sizeof(int));
+	e->h = 1;
+	e->c = 0;
+	return e;
+}
+
+void stack_grow(struct stack_t* stack){
+	assert(stack != NULL);
+	int* new_data = (int*)malloc(sizeof(int) * (stack->h) * 2);
+	assert(new_data != NULL);
+	memcpy(new_data, stack->data, sizeof(int) * stack->h);
+	free(stack->data);
+	stack->data = new_data;
+	stack->h *= 2;
+}
+
+void stack_push(struct stack_t* stack, int n){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	if(stack->c >= stack->h){
+		stack_grow(stack);
+	}
+	*(stack->data + stack->c) = n;
+	stack->c++;
+}
+
+int stack_pop(struct stack_t* stack){
+	assert(stack != NULL);
+	if(!stack->c){
+		printf("Stos pusty.");
+		exit(0);
+	} 
+	stack->c -= 1;
+	return *(stack->data + stack->c);
+}
+
+bool stack_empty(const struct stack_t* stack){
+	if(!stack->c) return true;
+	return false;
+}
+
+void stack_free(struct stack_t* stack){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	free(stack->data);
+	free(stack);
+}
+
+void stack_print(const struct stack_t* stack){
+	for(int i = 0; i < stack->c; ++i){
+		printf("%d\n", *((stack->data) + i));
+	}
+}
+
+int main(){
+	struct stack_t* stos = stack_create(10);
+	stack_push(stos, 10);
+	stack_push(stos, 20);
+	stack_push(stos, 30);
+	stack_print(stos);
+	printf("%d\n", stack_pop(stos)); // 30
+	stack_print(stos); // 20 10
+	return 0;
+}
+Zmodyfikuj API stosu z poprzedniego zadania tak, aby:
+•	funkcja stack_push była w stanie informować program wywołujący o tym, że stos jest przepłniony (np. zwracając true/false).
+•	funkcja stack_pop byłą w stanie informować program, że na stosie nie zastała żadnego elementu, który możnaby z niego zdjąć.
+
+Uwaga! Przy tak dość różnycn sposobie działania nowych wersji push/pop dobrze jest nie modyfikować istniejących a dodać nowe, np: stack_try_push  (próbuj położyć wartość na stos, jak się nie uda - zwróć informacje o tym fakcie).
+
+Słownie opisz działanie wprowadzonych zmian.
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <stdbool.h>
+
+struct stack_t{
+	unsigned h;
+	unsigned c;
+	int* data;	
+};
+
+struct stack_t* stack_create(){
+	struct stack_t* e = (struct stack_t*)malloc(sizeof(struct stack_t));
+	assert(e != NULL);
+	e->data = (int*)malloc(sizeof(int));
+	e->h = 1;
+	e->c = 0;
+	return e;
+}
+
+void stack_grow(struct stack_t* stack){
+	assert(stack != NULL);
+	int* new_data = (int*)malloc(sizeof(int) * (stack->h) * 2);
+	assert(new_data != NULL);
+	memcpy(new_data, stack->data, sizeof(int) * stack->h);
+	free(stack->data);
+	stack->data = new_data;
+	stack->h *= 2;
+}
+
+void stack_push(struct stack_t* stack, int n){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	if(stack->c >= stack->h){
+		stack_grow(stack);
+	}
+	*(stack->data + stack->c) = n;
+	stack->c++;
+}
+
+bool stack_try_push(struct stack_t* stack, int n){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	if(stack->c >= stack->h){
+		return 0;
+	}
+	*(stack->data + stack->c) = n;
+	stack->c++;
+	return 1;
+}
+//funkcja jaka jest kazdy widzi
+
+int stack_pop(struct stack_t* stack){
+	assert(stack != NULL);
+	if(!stack->c){
+		printf("Stos pusty.");
+		exit(0);
+	} 
+	stack->c -= 1;
+	return *(stack->data + stack->c);
+}
+
+bool stack_try_pop(struct stack_t* stack, int* ret){
+	assert(stack != NULL);
+	if(!stack->c){
+		return 0;
+	} 
+	stack->c -= 1;
+	*ret = *(stack->data + stack->c);
+	return 1;
+}
+//funckja zwraca status, a w parametrze zwraca wartosc zabranego elementu ze stosu w postaci wskaznika
+
+bool stack_empty(const struct stack_t* stack){
+	if(!stack->c) return true;
+	return false;
+}
+
+void stack_free(struct stack_t* stack){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	free(stack->data);
+	free(stack);
+}
+
+void stack_print(const struct stack_t* stack){
+	for(int i = 0; i < stack->c; ++i){
+		printf("%d\n", *((stack->data) + i));
+	}
+}
+
+int main(){
+	struct stack_t* stos = stack_create(10);
+	stack_push(stos, 10);
+	int* z;
+	printf("%d\n", stack_try_push(stos, 2));
+	
+	printf("%d\n", stack_try_pop(stos, &z));
+	printf("%d\n", z);
+	return 0;
+}
+
+Dodaj funkcje realizujące następujące operacje:
+•	funkcję usuwającą wszystkie elementy ze stosu,
+•	funkcję zapisującą zawartość stosu do pliku binarnego,
+•	funkcję wczytującą zawartość stosu z pliku binarnego,
+
+Uwaga. Wczytanie/zapisanie stosu to nie tylko wczytanie/zapisanie bufora danych ale również wszystkich informacji koneicznych do skorzystania ze stosu po jego wczytaniu.
+Uwaga! Utrzymaj nomenklaturę funkcji.
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <stdbool.h>
+
+struct stack_t{
+	unsigned h;
+	unsigned c;
+	int* data;	
+};
+
+struct stack_t* stack_create(){
+	struct stack_t* e = (struct stack_t*)malloc(sizeof(struct stack_t));
+	assert(e != NULL);
+	e->data = (int*)malloc(sizeof(int));
+	e->h = 1;
+	e->c = 0;
+	return e;
+}
+
+void stack_grow(struct stack_t* stack){
+	assert(stack != NULL);
+	int* new_data = (int*)malloc(sizeof(int) * (stack->h) * 2);
+	assert(new_data != NULL);
+	memcpy(new_data, stack->data, sizeof(int) * stack->h);
+	free(stack->data);
+	stack->data = new_data;
+	stack->h *= 2;
+}
+
+void stack_push(struct stack_t* stack, int n){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	if(stack->c >= stack->h){
+		stack_grow(stack);
+	}
+	*(stack->data + stack->c) = n;
+	stack->c++;
+}
+
+bool stack_empty(const struct stack_t* stack){
+	if(!stack->c) return true;
+	return false;
+}
+
+bool stack_try_push(struct stack_t* stack, int n){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	if(stack->c >= stack->h){
+		return 0;
+	}
+	*(stack->data + stack->c) = n;
+	stack->c++;
+	return 1;
+}
+//funkcja jaka jest kazdy widzi
+
+int stack_pop(struct stack_t* stack){
+	assert(stack != NULL);
+	if(stack_empty(stack)){
+		printf("Stos pusty.");
+		exit(0);
+	} 
+	stack->c -= 1;
+	return *(stack->data + stack->c);
+}
+
+void stack_clear_all(struct stack_t* stack){
+	assert(stack != NULL);
+	stack->c = 0;
+}
+
+bool stack_try_pop(struct stack_t* stack, int* ret){
+	assert(stack != NULL);
+	if(stack_empty(stack)){
+		return 0;
+	} 
+	stack->c -= 1;
+	*ret = *(stack->data + stack->c);
+	return 1;
+}
+//funckja zwraca status, a w parametrze zwraca wartosc zabranego elementu ze stosu w postaci wskaznika
+
+
+void stack_free(struct stack_t* stack){
+	assert(stack != NULL);
+	assert(stack->data != NULL);
+	free(stack->data);
+	free(stack);
+}
+
+int stack_print(const struct stack_t* stack){
+	if(stack->c == 0 || stack->data == NULL || stack->data == NULL) return 0;
+	for(int i = 0; i < stack->c; ++i){
+		printf("%d\n", *((stack->data) + i));
+	}
+	return 1;
+}
+
+int stack_bin_save(const struct stack_t* stack){
+	if(stack == NULL) return 0;
+	FILE* f = fopen("stack.bin", "wb");
+	if(f == NULL) return 0;
+	/*
+	for(int i = stack->c; i > 0; --i){
+		fwrite((stack->data) + i - 1, 1, sizeof(int), f);	
+	}
+	*/
+	fwrite(&stack->c, 1, sizeof(int), f);
+	fwrite(stack->data, stack->c, sizeof(int), f);
+	fclose(f);
+	return 1;
+}
+
+struct stack_t* stack_bin_load(){
+	FILE* f = fopen("stack.bin", "rb");
+	if(f == NULL) return NULL;
+	int size;
+	int temp;
+	struct stack_t* s = stack_create();
+	fread(&size, 1, sizeof(int), f);
+	for(int i = 0; i < size; ++i){
+		fread(&temp, 1, sizeof(int), f);
+		stack_push(s, temp);
+	}
+	return s;
+}
+
+int main(){
+	struct stack_t* stos = stack_create();
+	stack_push(stos, 10);
+	stack_push(stos, 11);
+	stack_push(stos, 12);
+	stack_push(stos, 1);
+	stack_bin_save(stos);
+	stack_print(stos);
+	system("pause");
+	stack_print(stack_bin_load());
+	//printf("%d\n", stack_try_push(stos, 2));
+	//printf("%d\n", stack_try_pop(stos, &z));
+	return 0;
+}
+
+Do tej pory kod obsługi stosu uwzględniał tylko jeden typ danych: int.
+Zaimplementuj wersje stosu dla następujących typów: 
+•	char, unsigned char,
+•	short, unsigned short,
+•	int, unsigned int,
+•	long int, unsigned long int,
+•	long long int, unsigned long long int,
+•	float, double
+Utworzone wersje API stosu muszą pozwalać pracować z nimi w ramach tego samego kodu źródłowego (np. program wykorzystujący dwa stosy typu int oraz 1 typu float). Przykład:
+stack_int_t* stos1 = stack_int_create(32);
+stack_int_t* stos2 = stack_int_create(32);
+stack_float_t* stos3 = stack_float_create(123);
+
+Podpowiedź 1: Skorzystaj z makrodefinicji - #define.
+Podpowiedź 2: Postaraj się nieprzepracować :)
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <stdbool.h>
+
+#define uchar unsigned char
+#define ushort unsigned short
+#define uint unsigned int
+#define lint long int
+#define llint long long int
+#define ulint unsigned long int
+#define ullint unsigned long long int
+
+#define stack_type_define( __TYPE__ ) \
+\
+struct stack_##__TYPE__##_t{   \
+	unsigned h;   \
+	unsigned c;   \
+	 __TYPE__ * data;	   \
+};   \
+   \
+struct stack_##__TYPE__## _t* stack_##__TYPE__##_create(){   \
+	struct stack_##__TYPE__##_t* e = (struct stack_##__TYPE__##_t*)malloc(sizeof(struct stack_##__TYPE__##_t));   \
+	assert(e != NULL);   \
+	e->data = ( __TYPE__ *)malloc(sizeof( __TYPE__ ));   \
+	e->h = 1;   \
+	e->c = 0;   \
+	return e;   \
+}   \
+ \
+void stack_##__TYPE__##_grow(struct stack_##__TYPE__##_t* stack){ \
+	assert(stack != NULL); \
+	__TYPE__ * new_data = ( __TYPE__ *)malloc(sizeof( __TYPE__ ) * (stack->h) * 2); \
+	assert(new_data != NULL); \
+	memcpy(new_data, stack->data, sizeof( __TYPE__ ) * stack->h); \
+	free(stack->data); \
+	stack->data = new_data; \
+	stack->h *= 2; \
+} \
+ \
+void stack_##__TYPE__##_push(struct stack_##__TYPE__##_t* stack,  __TYPE__  n){ \
+	assert(stack != NULL); \
+	assert(stack->data != NULL); \
+	if(stack->c >= stack->h){ \
+		stack_##__TYPE__##_grow(stack); \
+	} \
+	*(stack->data + stack->c) = n; \
+	stack->c++; \
+} \
+ \
+bool stack_##__TYPE__##_empty(const struct stack_##__TYPE__##_t* stack){ \
+	if(!stack->c) return true; \
+	return false; \
+} \
+ \
+bool stack_##__TYPE__##_try_push(struct stack_##__TYPE__##_t* stack,  __TYPE__  n){ \
+	assert(stack != NULL); \
+	assert(stack->data != NULL); \
+	if(stack->c >= stack->h){ \
+		return 0; \
+	} \
+	*(stack->data + stack->c) = n; \
+	stack->c++; \
+	return 1; \
+} \
+ \
+int stack_##__TYPE__##_pop(struct stack_##__TYPE__##_t* stack){ \
+	assert(stack != NULL); \
+	if(stack_##__TYPE__##_empty(stack)){ \
+		printf("Stos pusty."); \
+		exit(0); \
+	}  \
+	stack->c -= 1; \
+	return *(stack->data + stack->c); \
+} \
+ \
+void stack_##__TYPE__##_clear_all(struct stack_##__TYPE__##_t* stack){ \
+	assert(stack != NULL); \
+	stack->c = 0; \
+} \
+ \
+bool stack_##__TYPE__##_try_pop(struct stack_##__TYPE__##_t* stack,  __TYPE__ * ret){ \
+	assert(stack != NULL); \
+	if(stack_##__TYPE__##_empty(stack)){ \
+		return 0; \
+	}  \
+	stack->c -= 1; \
+	*ret = *(stack->data + stack->c); \
+	return 1; \
+} \
+ \
+ \
+void stack_##__TYPE__##_free(struct stack_##__TYPE__##_t* s){ \
+	assert(s != NULL); \
+	assert(s->data != NULL); \
+	free(s->data); \
+	free(s); \
+} \
+ \
+int stack_##__TYPE__##_print(const struct stack_##__TYPE__##_t* s){ \
+	if(s->c == 0 || s->data == NULL || s->data == NULL) return 0; \
+	for(int i = 0; i < s->c; ++i){ \
+		if(#__TYPE__[0] == 'd' || #__TYPE__[0] == 'f'){ \
+			printf("%f\n", *((s->data) + i)); \
+		} else if(#__TYPE__[0] == 'c') { \
+			printf("%c\n", *((s->data) + i)); \
+		} else { \
+			printf("%d\n", *((s->data) + i)); \
+		} \
+	} \
+	return 1; \
+} \
+ \
+int stack_##__TYPE__##_bin_save(const struct stack_##__TYPE__##_t* s){ \
+	if(s == NULL) return 0; \
+	FILE* f = fopen("stack.bin", "wb"); \
+	if(f == NULL) return 0; \
+	fwrite(&s->c, 1, sizeof(int), f); \
+	fwrite(s->data, s->c, sizeof( __TYPE__ ), f); \
+	fclose(f); \
+	return 1; \
+} \
+ \
+struct stack_##__TYPE__##_t* stack_##__TYPE__##_bin_load(){ \
+	FILE* f = fopen("stack.bin", "rb"); \
+	if(f == NULL) return NULL; \
+	int size; \
+	__TYPE__  temp; \
+	struct stack_##__TYPE__##_t* s = stack_##__TYPE__##_create(); \
+	fread(&size, 1, sizeof(int), f); \
+	for(int i = 0; i < size; ++i){ \
+		fread(&temp, 1, sizeof( __TYPE__ ), f); \
+		stack_##__TYPE__##_push(s, temp); \
+	} \
+	return s; \
+}
+
+stack_type_define (int);
+stack_type_define (uint);
+stack_type_define (short);
+stack_type_define (ushort);
+stack_type_define (float);
+stack_type_define (double);
+stack_type_define (char);
+stack_type_define (uchar);
+stack_type_define (lint);
+stack_type_define (ulint);
+stack_type_define (llint);
+stack_type_define (ullint);
+
+int main(){
+	struct stack_float_t* stos = stack_float_create();
+	stack_float_push(stos, 10);
+	stack_float_push(stos, 11);
+	stack_float_push(stos, 12);
+	stack_float_push(stos, 1);
+	stack_float_bin_save(stos);
+	stack_float_print(stos);
+	system("pause");
+	stack_float_print(stack_float_bin_load());
+	//printf("%d\n", stack_try_push(stos, 2));
+	//printf("%d\n", stack_try_pop(stos, &z));
+	return 0;
+}
+
+// latwe bylo
+
+
+W obecnej wersji zapimplementowane API wykorzystuje funkcję:
+	stack_t* stack_create(int size);
+która tworzy stos o stałej pojemności size elementów. Zmodyfikuj swoją implementację tak, aby uzyskać funkcję o prototypie:
+	stack_t* stack_create(int initial_capacity);
+która utoworzy stos o początkowej pojemności initial_capacity elementów. W momencie, kiedy program będzie chciał dodać do stosu o jeden element za dużo, funkcja stack_push ma zwiększyć pojemność stosu. Pamiętaj, aby nie utracić informacji o elementach już będących na stosie.
+Test:
+	stack_t* stos = stack_create(32);
+	for (int i = 0; i <= 1000; i++)
+		stack_push(stos, i);
+Napisz podobną pętlę to sprawdzenia, czy wartości zdejmowane ze stosu są poprawne (1000 -> 1).
+
+// u mnie to juz jest 
+
+
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!

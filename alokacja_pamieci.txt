@@ -1,0 +1,271 @@
+Napisz program, który alokuje tablicę 100 liczb typu float. Wypełnij ją wartościami od 0 do 99 i wyświetl. Pamiętaj o zwolnieniu pamięci przed zakończeniem programu.
+ 
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(){
+	float* tab = (float*)malloc(sizeof(float) * 100);
+	if(tab == NULL){
+		printf("%s\n", "blad pamieci");
+		exit(-1);
+	}
+	for(int i = 0; i < 100; ++i){
+		tab[i] = i;
+		printf("%f\n", tab[i]);
+	}
+	free(tab);
+	return 0;
+}
+Spróbuj zaalokować 1GB pamięci. Sprawdź, jak zachowa się system operacyjny (skorzystaj z menedżera zadań).
+#include <stdio.h>
+#include <stdlib.h>
+//chyba nie mozna tyle zaalokowac
+int main(){
+	char* tab = (char*)malloc(sizeof(char) * 1073741824);
+	if(tab == NULL){
+		printf("%s\n", "blad pamieci");
+		exit(-1);
+	}
+	system("PAUSE>nul");
+	free(tab);
+	return 0;
+}
+Alokuj bloki pamięci po 1kB w nieskończonej pętli. Sprawdź, jak zachowa się system operacyjny (skorzystaj z menedżera zadań).
+ 
+#include <stdio.h>
+#include <stdlib.h>
+//przestal alokowac przy ponad 2000000kB
+int main(){
+	char* tab;
+	while(1){
+		tab = (char*)malloc(sizeof(char) * 1024);
+		//system("PAUSE>nul");
+	}
+	free(tab);
+	return 0;
+}
+Zaalokuj pamięć dla liczby typu double. Do zaalokowanej pamięci zapisz liczbe PI. Wyświetla wartość tej pamięci (zaalokowanej zmiennej) oraz jej adres.
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int main(){
+	double* l_pi = (double*)malloc(sizeof(double));
+	*l_pi = acos(-1);
+	char* a = (char*)l_pi;
+	for (int i = 0; i < sizeof(l_pi); ++i) {
+		printf("Bajt: %d Wartosc: %d\n" , i + 1 , *(a + i));
+	}
+	system("PAUSE>nul");
+	free(l_pi);
+	return 0;
+}
+
+Napisz funkcję alokującą tablice typu float o podanej liczbie elementów. Wykorzystaj prototyp:
+float* alokuj(int N);
+
+
+#include <stdlib.h>
+
+float* alokuj(int N){
+	float* tab = (float*)malloc(sizeof(float) * N);
+	return tab;
+}
+Dana jest tablica: int tab[] a = { 1,2,3,4,5,6,7,8,9,10 };
+Napisz funkcję wyświetlającą tablice typu int o następującym prototypie:
+void wyswietl(const int* ptr, int N);
+Następnie napisz funkcje, która wykonuje kopię tablicy w parametrze. Prototyp funkcji kopiującej:
+int* kopia(const int* ptr, int N);
+Wykonaj kopię tablicy a. Wyświetl zawartość tej tablicy oraz jej kopii.
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+
+
+void wyswietl(const int* ptr, int N){
+	for(int i = 0; i < N; ++i){
+		printf("%d\n", *(ptr + i));
+	}
+}
+
+int* kopia(const int* ptr, int N){
+	int* tablica = (int*)malloc(sizeof(int) * N);
+	if (tablica == NULL)
+		return NULL;
+	for(int i = 0; i < N; ++i){
+		*(tablica + i) = *(ptr + i);
+	}
+	return tablica;
+}
+
+int main(){
+	int tab[] = { 1,2,3,4,5,6,7,8,9,10 };
+	printf("Zawartosc tablicy \"a\":\n");
+	wyswietl(tab, 10);
+	printf("Zawartosc tablicy skopiowanej:\n");
+	wyswietl(kopia(tab, 10), 10);
+	return 0;
+}
+Utwórz strukturę student_t, zawierającą trzy pola: imie (100 znaków), nazwisko (100 znaków), album (10 znaków). Napisz funkcję, która zwraca wskaźnik na strukturę wypełnioną danymi, podanymi z klawiatury przez użytkownika. Przykładowy prototyp:
+student_t* wypelnij(void);
+Dodaj funkcję wyświetlającą oraz zwalniającą pamięć.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct student_t{
+	char imie[100];
+	char nazwisko[100];
+	char album[10];
+};
+
+struct student_t* wypelnij(void){
+	struct student_t* st = (struct student_t*)malloc(sizeof(struct student_t));
+	if(st == NULL){
+		return NULL;
+	}
+	char bufor[100];
+	int i = 0;
+	//--------------------------------------
+	printf("%s", "Imie: ");
+	fgets(bufor, 99, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	while(bufor[i]){
+		st->imie[i] = bufor[i];
+		++i;
+	}
+	st->imie[i] = 0;
+	//--------------------------------------
+	i = 0;
+	printf("%s", "Nazwisko: ");
+	fgets(bufor, 99, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	while(bufor[i]){
+		st->nazwisko[i] = bufor[i];
+		++i;
+	}
+	st->nazwisko[i] = 0;
+	//--------------------------------------
+	printf("%s", "Album: ");
+	fgets(bufor, 9, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	i = 0;
+	while(bufor[i]){
+		st->album[i] = bufor[i];
+		++i;
+	}
+	st->album[i] = 0;
+	return st;
+}
+
+void wyswietl(struct student_t* st){
+	printf("%s\n", st->imie);
+	printf("%s\n", st->nazwisko);
+	printf("%s\n", st->album);
+}
+
+void uwolnic_barabasza(struct student_t* barabasz){
+	free(barabasz);
+}
+
+int main(){
+	struct student_t* stud = wypelnij();
+	wyswietl(stud);
+	uwolnic_barabasza(stud);
+	return 0;
+}
+Zmodyfikuj poprzednie zadanie tak, aby pola nie były tablicami znaków a wskaźnikami.
+Ponownie napisz funkcje
+student_t* wypelnij(void);
+oraz wyswietl i zwolnij. Pamiętaj ze zwolnić należy nie tylko pamięć struktury student_t ale też i tekstów w poszczególnych polach.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct student_t{
+	char* imie;
+	char* nazwisko;
+	char* album;
+};
+
+struct student_t* wypelnij(void){
+	struct student_t* st = (struct student_t*)malloc(sizeof(struct student_t));
+	if(st == NULL){
+		return NULL;
+	}
+	char bufor[100];
+	int i = 0;
+	//--------------------------------------
+	printf("%s", "Imie: ");
+	fgets(bufor, 99, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	st->imie = (char*)malloc(sizeof(char) * strlen(bufor));
+	if(st->imie == NULL){
+		free(st);
+		return NULL;
+	}
+	while(bufor[i]){
+		st->imie[i] = bufor[i];
+		++i;
+	}
+	st->imie[i] = 0;
+	//--------------------------------------
+	i = 0;
+	printf("%s", "Nazwisko: ");
+	fgets(bufor, 99, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	st->nazwisko = (char*)malloc(sizeof(char) * strlen(bufor));
+	if(st->nazwisko == NULL){
+		free(st->imie);
+		free(st);
+		return NULL;
+	}
+	while(bufor[i]){
+		st->nazwisko[i] = bufor[i];
+		++i;
+	}
+	st->nazwisko[i] = 0;
+	//--------------------------------------
+	printf("%s", "Album: ");
+	fgets(bufor, 9, stdin);
+	bufor[strlen(bufor) - 1] = 0;
+	st->album = (char*)malloc(sizeof(char) * strlen(bufor));
+	if(st->album == NULL){
+		free(st->nazwisko);
+		free(st->imie);
+		free(st);
+		return NULL;
+	}
+	i = 0;
+	while(bufor[i]){
+		st->album[i] = bufor[i];
+		++i;
+	}
+	st->album[i] = 0;
+	return st;
+}
+
+void wyswietl(struct student_t* st){
+	printf("%s\n", st->imie);
+	printf("%s\n", st->nazwisko);
+	printf("%s\n", st->album);
+}
+
+void uwolnic_barabasza(struct student_t* barabasz){
+	free(barabasz->imie);
+	free(barabasz->nazwisko);
+	free(barabasz->album);
+}
+
+int main(){
+	struct student_t* stud = wypelnij();
+	wyswietl(stud);
+	uwolnic_barabasza(stud);
+	return 0;
+}
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!

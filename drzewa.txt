@@ -1,0 +1,179 @@
+Operację matematyczną: 2*(3+4) można przedstawić w postaci następującego drzewa:
+
+    *
+   / \
+  /   +
+ /   / \
+2   3   4
+
+Zaproponuj konstrukcję drzewa binarnego, w postaci struktur oraz funkcji, pozwalających zbudować drzewo reprezentujące wyrażenie 2*(3+4) oraz wyznaczyć wartość tego wyrażenia na podstawie drzewa.
+Podpowiedź:
+•	Wyrażenie proszę zapisać w postaci wywołania funkcji zaproponowanego przez siebie API. 
+•	Zbiór API powinny tworzyć:
+i.	funkcja generująca węzeł wartości wezel* wartosc(double)
+ii.	funkcja generująca węzeł operacji wezel* op(op, lewy*, prawy*
+iii.	funkcja wyznaczająca wartość węzła/drzewa double wrtosc(wezel*)
+iv.	zwalniające pamięć drzewa zwolnij(wezel*)
+Uwaga!
+•	Próba zamiany tekstu „2*(3+4)” na drzewo nie jest celem tego zadania.
+Jedyne miejsce, w których wolno odwoływać się do pól w węzłach są funkcje zaproponowanego API - funkcji służących do budowy drzewa.
+
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+
+struct node{
+	int type; // 2:+, 3:-, 4:*, 5:/
+	double value;
+	struct node* left;
+	struct node* right;
+};
+
+struct node* create_node_v(double v){
+	struct node* nod = (struct node*)malloc(sizeof(struct node));
+	assert(nod != NULL);
+	nod->type = 1;
+	nod->value = v;
+	nod->left = NULL;
+    nod->right = NULL;
+	return nod;
+}
+
+struct node* create_node_o(int o, struct node* l, struct node* r){
+	assert(o >= 2 && o <= 5);
+	struct node* nod = (struct node*)malloc(sizeof(struct node));
+	assert(nod != NULL);
+	nod->type = o;
+	nod->left = l;
+	nod->right = r;
+	return nod;
+}
+
+double show(struct node* root){
+	if(root->type == 1){
+		return root->value;
+	}
+	if(root->type == 2){
+		return (show(root->left) + show(root->right));
+	}
+	if(root->type == 3){
+		return (show(root->left) - show(root->right));
+	}
+	if(root->type == 4){
+		return (show(root->left) * show(root->right));
+	}
+	if(root->type == 5){
+		return (show(root->left) / show(root->right));
+	}
+}
+
+void free_node(struct node* root){
+	if (root == NULL) return;
+    free_node(root->left);
+    free_node(root->right);
+    free(root);
+}
+
+int main(){
+	struct node* root = create_node_o(4, create_node_v(2), create_node_o(2, create_node_v(3), create_node_v(4)));
+	printf("%f\n", show(root));
+	free_node(root);
+
+}
+
+Wykorzystując funkcje API zbudowane w poprzednim zadaniu, zbuduj następujące drzewa:
+	100 + 200 + 300 + 400
+	(25 + 13 / 4) * 2
+	-5 * (25 + 13 / 4) * 2
+	-(20 + 30 * 40) + (40 - 30 / 20)
+	-2 * -2 -(-3 - -4)
+	-1 / -10 - 10
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+
+#define create_node_o cro
+#define create_node_v crv
+
+struct node{
+	int type; // 2:+, 3:-, 4:*, 5:/
+	double value;
+	struct node* left;
+	struct node* right;
+};
+
+struct node* create_node_v(double v){
+	struct node* nod = (struct node*)malloc(sizeof(struct node));
+	assert(nod != NULL);
+	nod->type = 1;
+	nod->value = v;
+	nod->left = NULL;
+    nod->right = NULL;
+	return nod;
+}
+
+struct node* create_node_o(int o, struct node* l, struct node* r){
+	assert(o >= 2 && o <= 5);
+	struct node* nod = (struct node*)malloc(sizeof(struct node));
+	assert(nod != NULL);
+	nod->type = o;
+	nod->left = l;
+	nod->right = r;
+	return nod;
+}
+
+double show(struct node* root){
+	if(root->type == 1){
+		return root->value;
+	}
+	if(root->type == 2){
+		return (show(root->left) + show(root->right));
+	}
+	if(root->type == 3){
+		return (show(root->left) - show(root->right));
+	}
+	if(root->type == 4){
+		return (show(root->left) * show(root->right));
+	}
+	if(root->type == 5){
+		return (show(root->left) / show(root->right));
+	}
+}
+
+void free_node(struct node* root){
+	if (root == NULL) return;
+    free_node(root->left);
+    free_node(root->right);
+    free(root);
+}
+
+int main(){
+	struct node* d1 = cro(2, cro(2, crv(100), crv(200)), 
+		cro(2, crv(300), crv(400)));
+	struct node* d2 = cro(4, crv(2), 
+		cro(2, crv(25), 
+			cro(5, crv(13), crv(4))));
+	struct node* d3 = cro(4, crv(2), 
+		cro(4, crv(-5), 
+			cro(2, crv(25), 
+				cro(5, crv(13), crv(4)))));
+	struct node* d4 = cro(2, 
+		cro(3, crv(0), 
+			cro(2, crv(20), 
+				cro(4, crv(30), crv(40)))), 
+		cro(3, crv(40), 
+			cro(5, crv(30), crv(20))));
+	struct node* d5 = cro(3, 
+		cro(4, crv(-2), crv(-2)),
+		cro(3, crv(-3), crv(-4)));
+	struct node* d6 = cro(3, crv(10),
+		cro(5, crv(-1), crv(-10)));
+	printf("%f %f %f %f %f", show(d1), show(d2), show(d3), show(d4), show(d5));
+}
+
+
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!

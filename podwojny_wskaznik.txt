@@ -1,0 +1,205 @@
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+
+Dane są następujące tablice:
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2000,3000,4000,5000,6000,7000,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+Przyjmując, że symbol -1 oraz NULL są symbolami końca tablic, napisz i przetestuj procedurę wyświetlającą wszystkie liczby, dostępne z poziomu tablicy D. Funkcja ma przyjmować w parametrze jeden argument: float**.
+
+/*
+Dane są następujące tablice:
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2000,3000,4000,5000,6000,7000,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+Przyjmując, że symbol -1 oraz NULL są symbolami końca tablic, napisz i przetestuj procedurę wyświetlającą wszystkie liczby, dostępne z poziomu tablicy D. Funkcja ma przyjmować w parametrze jeden argument: float**.
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2000,3000,4000,5000,6000,7000,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+void show(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			printf("%f\n", *(*(Dd + i) + j));
+			j++;
+		}
+		i++;
+	}
+}
+
+int main(){
+	show(D);
+	return 0;
+}
+
+Dane są następujące tablice:
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2040,320,4000,-5000,600,7040,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+Przyjmując, że symbol -1 oraz NULL są symbolami końca tablic, napisz i przetestuj funkcje, które z poziomu tablicy D wyznaczą:
+•	wartość minimalną oraz maksymalną,
+•	wartość rozstępu
+•	wartość średnią
+•	wartość odchylenia standardowego
+ze wszystkich liczb, dostępnych z poziomu tablicy D. Funkcje te mają przyjmować w parametrze jeden argument: float**.
+
+
+/*
+Dane są następujące tablice:
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2040,320,4000,-5000,600,7040,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+Przyjmując, że symbol -1 oraz NULL są symbolami końca tablic, napisz i przetestuj funkcje, które z poziomu tablicy D wyznaczą:
+•	wartość minimalną oraz maksymalną,
+•	wartość rozstępu
+•	wartość średnią
+•	wartość odchylenia standardowego
+ze wszystkich liczb, dostępnych z poziomu tablicy D. Funkcje te mają przyjmować w parametrze jeden argument: float**.
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+float A[] = {10,20,30,40,50,60,70,-1};
+float B[] = {100,200,300,400,500,600,700,800,-1};
+float C[] = {1000,2000,3000,4000,5000,6000,7000,8000,9000,-1};
+float* D[] = {A, B, C, NULL};
+
+void show(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			printf("%f\n", *(*(Dd + i) + j));
+			j++;
+		}
+		i++;
+	}
+}
+
+float min(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	int min = *(*(Dd));
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			//printf("%f\n", *(*(Dd + i) + j));
+			if(*(*(Dd + i) + j) < min){
+				min = *(*(Dd + i) + j);
+			}
+			j++;
+		}
+		i++;
+	}
+	return min;
+}
+
+float max(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	int min = *(*(Dd));
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			//printf("%f\n", *(*(Dd + i) + j));
+			if(*(*(Dd + i) + j) > min){
+				min = *(*(Dd + i) + j);
+			}
+			j++;
+		}
+		i++;
+	}
+	return min;
+}
+
+int count(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	int min = 0;
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			//printf("%f\n", *(*(Dd + i) + j));
+			j++;
+		}
+		min += j;
+		i++;
+	}
+	return min;
+}
+
+float range(float** Dd){
+	return max(Dd) - min(Dd);
+}
+
+float sum(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	float sum = 0;
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			//printf("%f\n", *(*(Dd + i) + j));
+			sum += *(*(Dd + i) + j);
+			j++;
+		}
+		i++;
+	}
+	return sum;
+}
+
+float avg(float** Dd){
+	return sum(Dd) / count(Dd);
+}
+
+float dewiacja_standardowa(float** Dd){
+	unsigned i = 0;
+	unsigned j = 0;
+	float s = 0;
+	while(*(Dd + i) != NULL){
+		j = 0;
+		while(*(*(Dd + i) + j) != -1){
+			//printf("%f\n", *(*(Dd + i) + j));
+			s += pow((*(*(Dd + i) + j) - avg(Dd)), 2);
+			j++;
+		}
+		i++;
+	}
+	return sqrt(s / (count(Dd) - 1));
+}
+
+int main(){
+	//show(D);
+	printf("%f\n", min(D));
+	printf("%f\n", max(D));
+	printf("%f\n", range(D));
+	printf("%f\n", avg(D));
+	printf("%f\n", dewiacja_standardowa(D));
+	return 0;
+}
+
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!

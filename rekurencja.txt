@@ -1,0 +1,70 @@
+Napisz program, który za pomocą rekurencji wyznaczy wartość silni podanej liczby całkowitej.
+#include <stdlib.h>
+#include <stdio.h>
+
+int silnia(int n){
+	if(n == 1){
+		return 1;
+	}
+	if(n > 1) return silnia(n - 1) * n;
+}
+int main(){
+	int n;
+	scanf("%d", &n);
+	printf("%d", silnia(n));
+}
+Napisz program, który za pomocą rekurencji wyświetli na ekranie tekst podany w parametrze. Do wyświetlania można używać putc lub printf("%c").
+Uwaga! Funkcja rekurencyjna może przyjmować wyłącznie jeden parametr (z modyfikatorem const oczywiście).
+
+#include <stdio.h>
+
+void recursive_print(const char* txt);
+
+int main() {
+	recursive_print("Ala ma kota");
+
+	return 0;
+}
+
+void recursive_print(const char* txt) {
+	if(*txt){
+		printf("%c", *txt);
+		recursive_print(++txt);
+	}
+}
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+Dana jest tablica N dowolnych liczb, zaproponowanych przez siebie. Napisz program, który za pomocą rekurencji wyznaczy sumę wartości z tablicy.
+Podobną operację przeprowadź dla różnicy, iloczynu i ilorazu.
+Uwaga! Funkcje rekurencyjnego obliczania danej wartości mogą przyjmować jedynie dwa parametry.
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+
+int table[2137];
+
+
+int suma(int* t, int n){
+	if(n == 0){
+		return t[n];
+	}
+	if(n > 0){
+		return t[n] + suma(t, n - 1);	
+	}
+	
+}
+
+int main(){
+	srand(time(NULL));
+	for(int i = 0; i < 2137; ++i){
+		*(table + i) = rand() % 2137; 
+		printf("#%d : %d\n", i, *(table + i));
+	}
+	printf("%d\n", suma(table, 2137));
+	return 0;
+}
+
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!

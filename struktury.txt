@@ -1,0 +1,43 @@
+Napisz program pozwalający na wczytanie danych studenta: imienia, nazwiska oraz indeksu do struktury student_t. Zaproponuj kształt struktury. Wprowadzone dane wyświetl.
+Kod, który pobiera od użytkownika dane i zapisuje je do struktury,
+oraz kod który wyświetla strukturę na ekranie ma być zamknięty w postaci funkcji o następujących prototypach:
+	void wpisz_dane(student_t *rekord);
+	void wyswietl_dane(const student_t *rekord);
+#include <cstdlib>
+#include <cstdio>
+
+struct student_t {
+	unsigned int indeks;
+	char imie[256];
+	char nazwisko[256];
+};
+
+void wpisz_dane(student_t *rekord) {
+	printf("Podaj imie studenta: ");
+	scanf("%255s", rekord->imie);
+	printf("Podaj nazwisko studenta: ");
+	scanf("%255s", rekord->nazwisko);
+	printf("Podaj indeks studenta: ");
+	scanf("%d", &rekord->indeks);
+}
+
+void wyswietl_dane(const student_t *rekord) {
+	printf("Imie: %s\n", rekord->imie);
+	printf("Nazwisko: %s\n", rekord->nazwisko);
+	printf("Indeks: %d\n", rekord->indeks);
+}
+
+int main()
+{
+	student_t student;
+	wpisz_dane(&student);
+	system("PAUSE>nul");
+	wyswietl_dane(&student);
+	system("PAUSE>nul");
+    return 0;
+}
+
+!!!!!!!! jeszcze nie zaliczone TODO:dodac jak bedzie zaliczone!!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
+!!!!!!!! brak rozwiazania !!!!!!!
